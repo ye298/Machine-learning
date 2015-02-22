@@ -1,0 +1,133 @@
+<html>
+
+<head>
+<style type="text/css">
+.knitr.inline {
+  background-color: #f7f7f7;
+  border:solid 1px #B0B0B0;
+}
+.error {
+	font-weight: bold;
+	color: #FF0000;
+},
+.warning {
+	font-weight: bold;
+}
+.message {
+	font-style: italic;
+}
+.source, .output, .warning, .error, .message {
+	padding: 0em 1em;
+  border:solid 1px #F7F7F7;
+}
+.source {
+  background-color: #f5f5f5;
+}
+.rimage.left {
+  text-align: left;
+}
+.rimage.right {
+  text-align: right;
+}
+.rimage.center {
+  text-align: center;
+}
+.hl.num {
+  color: #AF0F91;
+}
+.hl.str {
+  color: #317ECC;
+}
+.hl.com {
+  color: #AD95AF;
+  font-style: italic;
+}
+.hl.opt {
+  color: #000000;
+}
+.hl.std {
+  color: #585858;
+}
+.hl.kwa {
+  color: #295F94;
+  font-weight: bold;
+}
+.hl.kwb {
+  color: #B05A65;
+}
+.hl.kwc {
+  color: #55aa55;
+}
+.hl.kwd {
+  color: #BC5A65;
+  font-weight: bold;
+}
+</style>
+<title>Practical Machine Learning Project</title>
+</head>
+
+<body>
+
+<p>Data input and cleaning</p>
+<div class="chunk" id="unnamed-chunk-1"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl std">training</span><span class="hl kwb">&lt;-</span><span class="hl kwd">read.csv</span><span class="hl std">(</span><span class="hl str">&quot;pml-training.csv&quot;</span><span class="hl std">,</span><span class="hl kwc">sep</span><span class="hl std">=</span><span class="hl str">&quot;,&quot;</span><span class="hl std">,</span><span class="hl kwc">header</span><span class="hl std">=</span><span class="hl num">TRUE</span><span class="hl std">,</span><span class="hl kwc">na.strings</span><span class="hl std">=</span><span class="hl kwd">c</span><span class="hl std">(</span><span class="hl str">&quot;NA&quot;</span><span class="hl std">,</span><span class="hl str">&quot;&quot;</span><span class="hl std">),</span><span class="hl kwc">stringsAsFactors</span><span class="hl std">=</span><span class="hl num">FALSE</span><span class="hl std">,</span><span class="hl kwc">as.is</span><span class="hl std">=</span><span class="hl num">TRUE</span><span class="hl std">)</span>
+<span class="hl std">training</span><span class="hl opt">$</span><span class="hl std">classe</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">as.factor</span><span class="hl std">(training</span><span class="hl opt">$</span><span class="hl std">classe)</span>
+<span class="hl std">training</span> <span class="hl kwb">&lt;-</span> <span class="hl std">training[,</span><span class="hl opt">-</span><span class="hl kwd">nearZeroVar</span><span class="hl std">(training)]</span>
+</pre></div>
+<div class="error"><pre class="knitr r">## Error in `[.data.frame`(training, , -nearZeroVar(training)): 没有&quot;nearZeroVar&quot;这个函数
+</pre></div>
+<div class="source"><pre class="knitr r"><span class="hl com">#The 1st to 7th columns are obviously not suitable for analysis hence we did not include them from data sets</span>
+<span class="hl std">training</span> <span class="hl kwb">&lt;-</span> <span class="hl std">training[,</span><span class="hl opt">-</span><span class="hl kwd">c</span><span class="hl std">(</span><span class="hl num">1</span><span class="hl std">,</span><span class="hl num">2</span><span class="hl std">,</span><span class="hl num">3</span><span class="hl std">,</span><span class="hl num">4</span><span class="hl std">,</span><span class="hl num">5</span><span class="hl std">,</span><span class="hl num">6</span><span class="hl std">,</span><span class="hl num">7</span><span class="hl std">)]</span>
+<span class="hl com">#Set the seed for reproduction</span>
+<span class="hl kwd">set.seed</span><span class="hl std">(</span><span class="hl num">111</span><span class="hl std">)</span>
+<span class="hl std">inTrain</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">createDataPartition</span><span class="hl std">(</span><span class="hl kwc">y</span><span class="hl std">=training</span><span class="hl opt">$</span><span class="hl std">classe,</span> <span class="hl kwc">p</span><span class="hl std">=</span><span class="hl num">0.75</span><span class="hl std">,</span> <span class="hl kwc">list</span><span class="hl std">=</span><span class="hl num">FALSE</span><span class="hl std">)</span>
+</pre></div>
+<div class="error"><pre class="knitr r">## Error in eval(expr, envir, enclos): 没有&quot;createDataPartition&quot;这个函数
+</pre></div>
+<div class="source"><pre class="knitr r"><span class="hl com">#Seperate training set and testing set</span>
+<span class="hl std">training</span> <span class="hl kwb">&lt;-</span> <span class="hl std">training[inTrain,]</span>
+</pre></div>
+<div class="error"><pre class="knitr r">## Error in `[.data.frame`(training, inTrain, ): 找不到对象'inTrain'
+</pre></div>
+<div class="source"><pre class="knitr r"><span class="hl std">testing</span> <span class="hl kwb">&lt;-</span> <span class="hl std">training[</span><span class="hl opt">-</span><span class="hl std">inTrain,]</span>
+</pre></div>
+<div class="error"><pre class="knitr r">## Error in `[.data.frame`(training, -inTrain, ): 找不到对象'inTrain'
+</pre></div>
+<div class="source"><pre class="knitr r"><span class="hl com">#There'are character data and na data in the data set, we use knnimpute and other methods to clean the data </span>
+<span class="hl std">training</span><span class="hl kwb">&lt;-</span><span class="hl std">training[,</span><span class="hl opt">!</span><span class="hl kwd">sapply</span><span class="hl std">(training,is.character)]</span>
+<span class="hl std">pre</span><span class="hl kwb">&lt;-</span><span class="hl kwd">preProcess</span><span class="hl std">(training[,</span><span class="hl opt">-</span><span class="hl kwd">length</span><span class="hl std">(training)],</span><span class="hl kwc">method</span><span class="hl std">=</span><span class="hl kwd">c</span><span class="hl std">(</span><span class="hl str">&quot;center&quot;</span><span class="hl std">,</span> <span class="hl str">&quot;scale&quot;</span><span class="hl std">,</span> <span class="hl str">&quot;knnImpute&quot;</span><span class="hl std">,</span> <span class="hl str">&quot;pca&quot;</span><span class="hl std">),</span> <span class="hl kwc">thresh</span><span class="hl std">=</span><span class="hl num">0.95</span><span class="hl std">)</span>
+</pre></div>
+<div class="error"><pre class="knitr r">## Error in eval(expr, envir, enclos): 没有&quot;preProcess&quot;这个函数
+</pre></div>
+<div class="source"><pre class="knitr r"><span class="hl std">clean_data</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">predict</span><span class="hl std">(pre,training[,</span><span class="hl opt">-</span><span class="hl kwd">length</span><span class="hl std">(training)])</span>
+</pre></div>
+<div class="error"><pre class="knitr r">## Error in predict(pre, training[, -length(training)]): 找不到对象'pre'
+</pre></div>
+</div></div>
+<p>Exploratory Data Analysis</p>
+<div class="chunk" id="unnamed-chunk-2"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl kwd">library</span><span class="hl std">(datasets);</span><span class="hl kwd">require</span><span class="hl std">(stats);</span><span class="hl kwd">require</span><span class="hl std">(graphics)</span>
+<span class="hl kwd">pairs</span><span class="hl std">(clean_data,</span> <span class="hl kwc">panel</span> <span class="hl std">= panel.smooth,</span> <span class="hl kwc">main</span> <span class="hl std">=</span> <span class="hl str">&quot;Accelerometers pair stats&quot;</span><span class="hl std">)</span>
+</pre></div>
+<div class="error"><pre class="knitr r">## Error in pairs(clean_data, panel = panel.smooth, main = &quot;Accelerometers pair stats&quot;): 找不到对象'clean_data'
+</pre></div>
+</div></div>
+<p>Build model with training set</p>
+<div class="chunk" id="unnamed-chunk-3"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl com">#Random forest is used to perform machine learning</span>
+<span class="hl std">model</span><span class="hl kwb">&lt;-</span><span class="hl kwd">train</span><span class="hl std">(training</span><span class="hl opt">$</span><span class="hl std">classe</span> <span class="hl opt">~</span><span class="hl std">.,</span><span class="hl kwc">data</span><span class="hl std">=clean_data,</span> <span class="hl kwc">method</span><span class="hl std">=</span><span class="hl str">&quot;rf&quot;</span><span class="hl std">)</span>
+</pre></div>
+<div class="error"><pre class="knitr r">## Error in eval(expr, envir, enclos): 没有&quot;train&quot;这个函数
+</pre></div>
+</div></div>
+<p>Predict testing set and validate</p>
+<div class="chunk" id="unnamed-chunk-4"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl com">#Random forest is used to perform machine learning</span>
+<span class="hl std">test</span> <span class="hl kwb">&lt;-</span><span class="hl kwd">predict</span><span class="hl std">(pre, testing[,</span><span class="hl opt">-</span><span class="hl kwd">length</span><span class="hl std">(testing)])</span>
+</pre></div>
+<div class="error"><pre class="knitr r">## Error in predict(pre, testing[, -length(testing)]): 找不到对象'pre'
+</pre></div>
+<div class="source"><pre class="knitr r"><span class="hl kwd">confusionMatrix</span><span class="hl std">(testing</span><span class="hl opt">$</span><span class="hl std">classe,</span> <span class="hl kwd">predict</span><span class="hl std">(model,test))</span>
+</pre></div>
+<div class="error"><pre class="knitr r">## Error in eval(expr, envir, enclos): 没有&quot;confusionMatrix&quot;这个函数
+</pre></div>
+</div></div>
+
+</body>
+</html>

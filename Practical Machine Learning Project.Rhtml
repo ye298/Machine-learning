@@ -1,0 +1,46 @@
+<html>
+
+<head>
+<title>Practical Machine Learning Project</title>
+</head>
+
+<body>
+
+<p>Data input and cleaning</p>
+<!--begin.rcode
+require(caret)
+training<-read.csv("pml-training.csv",sep=",",header=TRUE,na.strings=c("NA",""),stringsAsFactors=FALSE,as.is=TRUE)
+training$classe <- as.factor(training$classe)
+training <- training[,-nearZeroVar(training)]
+#The 1st to 7th columns are obviously not suitable for analysis hence we did not include them from data sets
+training <- training[,-c(1,2,3,4,5,6,7)]
+#Set the seed for reproduction
+set.seed(111)
+inTrain <- createDataPartition(y=training$classe, p=0.75, list=FALSE)
+#Seperate training set and testing set
+training <- training[inTrain,]
+testing <- training[-inTrain,]
+#There'are character data and na data in the data set, we use knnimpute and other methods to clean the data 
+training<-training[,!sapply(training,is.character)]
+pre<-preProcess(training[,-length(training)],method=c("center", "scale", "knnImpute", "pca"), thresh=0.95)
+clean_data <- predict(pre,training[,-length(training)])
+end.rcode-->
+<p>Exploratory Data Analysis</p>
+<!--begin.rcode
+library(datasets);require(stats);require(graphics)
+pairs(clean_data, panel = panel.smooth, main = "Accelerometers pair stats")
+end.rcode-->
+<p>Build model with training set</p>
+<!--begin.rcode
+#Random forest is used to perform machine learning
+model<-train(training$classe ~.,data=clean_data, method="rf")
+end.rcode-->
+<p>Predict testing set and validate</p>
+<!--begin.rcode
+#Test sets is used to validate the model and confusion matrix is shown for diagnosis
+test <-predict(pre, testing[,-length(testing)])
+confusionMatrix(testing$classe, predict(model,test))
+end.rcode-->
+
+</body>
+</html>
